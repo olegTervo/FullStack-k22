@@ -1,8 +1,8 @@
 import Part from "./Part"
 
 const Content = (props) => {
-    return props.tasks.map(p => (
-        <Part part={p.part} exercise={p.exercise} />
+    return props.parts.map(p => (
+        <Part part={p.name} exercise={p.exercises} />
       )
     )
 }
