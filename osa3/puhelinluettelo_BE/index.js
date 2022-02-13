@@ -1,7 +1,16 @@
 const express = require('express')
+const morgan = require('morgan')
+
+morgan.token('body', function getBody (req) {
+  if(req.method && req.method === 'POST')
+    return JSON.stringify(req.body)
+  return null
+})
+
 const app = express()
 
 app.use(express.json())
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 let persons = [
     {
@@ -52,7 +61,6 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  console.log("here")
   const id = Number(request.params.id)
   persons = persons.filter(p => p.id !== id)
 
@@ -61,7 +69,6 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  console.log(body)
 
   if (!body.name || !body.number) {
     return response.status(400).json({ 
@@ -74,7 +81,6 @@ app.post('/api/persons', (request, response) => {
       error: 'name must be unique' 
     })
   }
-
 
   const person = {
     name: body.name,
