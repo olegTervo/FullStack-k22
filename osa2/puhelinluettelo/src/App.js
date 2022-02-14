@@ -12,7 +12,7 @@ const App = () => {
   const DeletedText = (name) => `Deleted ${name}`
   const ChangedText = (name) => `Changed ${name}`
   const NotFoundText = (name) => `Information of ${name} have been already removed from the server`
-  const Error = (name) => `Error on operation`
+  const ErrorText = (name) => `Error on operation`
 
   const Added = (name) => {
     setNotification({
@@ -20,7 +20,7 @@ const App = () => {
       isError:false
     })
     setTimeout(() => {
-      setNotification(null)
+      setNotification({message: '', isError:false})
     }, 5000)
   }
 
@@ -30,7 +30,7 @@ const App = () => {
       isError:false
     })
     setTimeout(() => {
-      setNotification(null)
+      setNotification({message: '', isError:false})
     }, 5000)
   }
 
@@ -40,7 +40,7 @@ const App = () => {
       isError:false
     })
     setTimeout(() => {
-      setNotification(null)
+      setNotification({message: '', isError:false})
     }, 5000)
   }
 
@@ -50,7 +50,17 @@ const App = () => {
       isError:true
     })
     setTimeout(() => {
-      setNotification(null)
+      setNotification({message: '', isError:false})
+    }, 5000)
+  }
+
+  const Error = (message) => {
+    setNotification({
+      message:message, 
+      isError:true
+    })
+    setTimeout(() => {
+      setNotification({message: '', isError:false})
     }, 5000)
   }
 
@@ -76,6 +86,9 @@ const App = () => {
           Added(response.data.name)
           setPersons(persons.concat(response.data))
         })
+        .catch(error => {
+          Error(error.response.data.error)
+        });
     }
     else {
       if(window.confirm(`${newName} is already exists. Do you want to update number?`)) {
@@ -100,7 +113,7 @@ const App = () => {
   const nameInputCallback = (e) => setNewName(e.target.value)
   const phoneInputCallback = (e) => setNewPhoneNumber(e.target.value)
   const deleteCallback = (e) => {
-    const personToDelete = persons.find(p => p.id === Number(e.target.id))
+    const personToDelete = persons.find(p => p.id === e.target.id)
 
     if(window.confirm(`Are you shure you want to delete ${personToDelete.name}?`))
       PhoneNumberService
