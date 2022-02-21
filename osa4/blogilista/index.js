@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const http = require('http')
 const express = require('express')
 const app = express()
@@ -12,8 +14,9 @@ const blogSchema = mongoose.Schema({
 })
 
 const Blog = mongoose.model('Blog', blogSchema)
+const password = process.env.PASSWORD
 
-const mongoUrl = 'mongodb+srv://olegTervo:Olegtervo96@fullstackproject.xstvv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+const mongoUrl = `mongodb+srv://olegTervo:${password}@fullstackproject.xstvv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
 mongoose.connect(mongoUrl)
 
 app.use(cors())
