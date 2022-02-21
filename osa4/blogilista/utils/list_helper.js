@@ -30,8 +30,6 @@ const mostBlogs = (blogs) => {
     
     return blogs.reduce(
         (res, blog) => { 
-            console.log(res, blog)
-
             let ret = [...res];
 
             if(res.findIndex(r => r.author === blog.author) !== -1) {
@@ -61,8 +59,6 @@ const mostLikes = (blogs) => {
     
     return blogs.reduce(
         (res, blog) => { 
-            console.log(res, blog)
-
             let ret = [...res];
 
             if(res.findIndex(r => r.author === blog.author) !== -1) {
