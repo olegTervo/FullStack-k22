@@ -96,6 +96,42 @@ test('error on empty url', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
+test('test delete', async () => {
+    const response = await api.get('/api/blogs')
+
+    await api
+      .delete(`/api/blogs/${response.body.find(blog => blog.id).id}`)
+      .expect(204)
+
+    const response_after_delete = await api.get('/api/blogs')
+    expect(response_after_delete.body).toHaveLength(initialBlogs.length-1)
+  })
+
+test('test change', async () => {
+    const response = await api.get('/api/blogs')
+    let first = response.body.find(blog => blog.id);
+    let changed = {
+        title: 'FindMe',
+        author: first.author,
+        url: first.url,
+        likes: 1010
+    }
+
+    await api
+      .put(`/api/blogs/${first.id}`)
+      .send(changed)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const response_after_delete = await api.get('/api/blogs')
+
+
+    expect(response_after_delete.body).toHaveLength(initialBlogs.length)
+
+    const savedBlog = response_after_delete.body.find(blog => blog.title === changed.title)
+    expect(savedBlog.likes).toBe(1010)
+  })
+
 afterAll(() => {
   mongoose.connection.close()
 })
