@@ -19,6 +19,7 @@ mongoose.connect(config.MONGODB_URI)
   })
 
 const Blog = require('./models/blog')
+const User = require('./models/user')
 
 app.use(cors())
 app.use(express.json())

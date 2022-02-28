@@ -1,14 +1,21 @@
+
+const bcrypt = require('bcrypt')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
-const {initialBlogs} = require('./test_helper')
+const User = require('../models/user')
+const {initialBlogs, initialUsers, getInitialUserId} = require('./test_helper')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
+    await User.deleteMany({})
 
     await Blog.insertMany(initialBlogs)
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = await new User({...initialUsers[0], passwordHash}).save()
 })
 
 test('notes are returned as json', async () => {
@@ -32,6 +39,7 @@ test('id defined', async () => {
 
 test('can create new blog', async () => {
     const newBlog = {
+        userId: await getInitialUserId(),
         title: 'Test',
         author: 'new',
         url: 'www',
@@ -51,6 +59,7 @@ test('can create new blog', async () => {
 
 test('default likes is 0', async () => {
     const newBlog = {
+        userId: await getInitialUserId(),
         title: 'Test',
         author: 'new',
         url: 'www'
@@ -72,8 +81,9 @@ test('default likes is 0', async () => {
 
 test('error on empty title', async () => {
   const newBlog1 = {
-    title: 'Test',
-    author: 'new'
+    userId: await getInitialUserId(),
+    author: 'new',
+    url: 'www'
   }
       
   await api
@@ -85,6 +95,7 @@ test('error on empty title', async () => {
 
 test('error on empty url', async () => {
   const newBlog1 = {
+    userId: await getInitialUserId(),
     title: 'Test',
     author: 'new'
   }

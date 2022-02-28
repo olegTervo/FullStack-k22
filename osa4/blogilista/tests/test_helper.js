@@ -1,3 +1,5 @@
+const User = require('../models/user')
+
 const initialBlogs = [
     {
       title: 'Go To Statement Considered Harmful',
@@ -19,6 +21,28 @@ const initialBlogs = [
     }
 ]
 
+const initialUsers = [
+  {
+    username: 'test',
+    name: 'test',
+    passwordHash: '',
+    blogs: []
+  }
+]
+
+const getInitialUserId = async () => {
+  const users = await User.find({})
+  return users[0]._id
+}
+
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(u => u.toJSON())
+}
+
 module.exports = {
-    initialBlogs
+    initialBlogs,
+    initialUsers,
+    usersInDb,
+    getInitialUserId
   }
