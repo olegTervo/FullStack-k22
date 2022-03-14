@@ -22,9 +22,9 @@ const notificationSlice = createSlice({
   },
 })
 
-export const notifyForATime = (anecdote, secounds) => {
+export const notifyForATime = (message, secounds) => {
   return async dispatch => {
-    dispatch(notify("you voted '" + anecdote + "'"))
+    dispatch(notify(message))
     setTimeout(() => dispatch(clear()), Number(secounds)*1000)
   }
 }
