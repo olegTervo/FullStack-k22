@@ -1,13 +1,7 @@
-const getId = () => (100000 * Math.random()).toFixed(0)
-const initialState = []
+import anecdotesService from '../services/anecdotesService'
+import { notifyForATime } from '../reducers/notificationReducer'
 
-const asObject = (anecdote) => {
-  return {
-    content: anecdote.content,
-    id: getId(),
-    votes: anecdote.votes
-  }
-}
+const initialState = []
 
 export const addAVote = (id) => {
   return {
@@ -26,7 +20,7 @@ export const newAnecdote = (anecdote) => {
 export const setAnecdotes = (anecdotes) => {
   return {
     type: 'SET_ANECDOTES',
-    data: { anecdotes: anecdotes.map(asObject) }
+    data: { anecdotes }
   }
 }
 
@@ -40,14 +34,41 @@ const reducer = (state = initialState, action) => {
       return state.map(a => a.id !== id ? a : changedAnecdote).sort((a, b) => b.votes - a.votes)
 
     case 'NEW_ANECDOTE':
-      const newAnecdote = asObject(action.data.anecdote)
-
-      return state.concat(newAnecdote)
+      const anecdoteToAdd = action.data.anecdote
+      return state.concat(anecdoteToAdd)
 
     case 'SET_ANECDOTES':
       return action.data.anecdotes
     default: 
       return state
+  }
+}
+
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdotesService.getAll()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
+
+export const createAnecdote = content => {
+  return async dispatch => {
+    const createdAnecdote = await anecdotesService.createNew(content)
+    dispatch(newAnecdote(createdAnecdote))
+  }
+}
+
+export const vote = id => {
+  return async dispatch => {
+    const updatedAnecdote = await anecdotesService.increaseVotes(id)
+
+    if(updatedAnecdote === null)
+      return
+
+    console.log(updatedAnecdote)
+    dispatch(addAVote(id))
+
+    dispatch(notifyForATime("you voted '" + updatedAnecdote.content + "'", 5))
   }
 }
 
